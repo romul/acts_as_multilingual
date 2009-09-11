@@ -49,5 +49,29 @@ class ActsAsMultilingualTest < ActiveSupport::TestCase
     assert_equal p.body_ru, p.ml_body[:ru]
   end
 
+  def test_default_assignment
+    I18n.locale = 'en'
+
+    p = TestPost.new(:title_ru => "Заголовок", :title => "Title",
+                     :body_ru => "Содержимое", :body => "Content")
+
+    assert_equal "Title", p.title
+    assert_equal "Content", p.body
+    assert_equal "Заголовок", p.title_ru
+    assert_equal "Содержимое", p.body_ru
+
+    assert_equal p.title_en, p.title
+    assert_equal p.title_en, p.ml_title[:en]
+    assert_equal p.body_en, p.body
+    assert_equal p.body_en, p.ml_body[:en]
+
+    I18n.locale = 'ru'
+    assert_equal p.title_ru, p.title
+    assert_equal p.title_ru, p.ml_title[:ru]
+    assert_equal p.body_ru, p.body
+    assert_equal p.body_ru, p.ml_body[:ru]
+  end
+
+
 end
 

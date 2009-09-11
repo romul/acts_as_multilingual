@@ -23,6 +23,15 @@ module Multilingual
 	        send("ml_#{method}")[I18n.locale.to_sym]
 	      end
 
+        define_method("#{method}=") do |value, *args|
+          ml_values = send "ml_#{method}"
+          ml_values[I18n.locale.to_sym] = value
+          yml = options[:disable_url_encode] ?
+              Multilingual.to_yml(ml_values, languages) :
+              ml_values.to_yaml
+          send "#{method}_ml=", yml
+        end
+
 	      languages.each do |lang|
 	        define_method("#{method}_#{lang}") do |*args|
 	          send("ml_#{method}")[lang]
