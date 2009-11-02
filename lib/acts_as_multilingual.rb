@@ -1,4 +1,6 @@
 module Multilingual
+  require 'ya2yaml'
+
   mattr_accessor :languages
 
   def self.included(base)
@@ -7,8 +9,8 @@ module Multilingual
 
   module ClassMethods
     def acts_as_multilingual(fields_array, options = {})
-		languages = Multilingual.languages
-        languages = options[:languages] if options[:languages]
+		  languages = Multilingual.languages
+      languages = options[:languages] if options[:languages]
 
 	    fields_array.each do |method|
 		  method = method.to_s
@@ -26,9 +28,7 @@ module Multilingual
         define_method("#{method}=") do |value, *args|
           ml_values = send "ml_#{method}"
           ml_values[I18n.locale.to_sym] = value
-          yml = options[:disable_url_encode] ?
-              Multilingual.to_yml(ml_values, languages) :
-              ml_values.to_yaml
+          yml = ml_values.ya2yaml
           send "#{method}_ml=", yml
         end
 
@@ -40,9 +40,7 @@ module Multilingual
 	        define_method("#{method}_#{lang}=") do |value, *args|
 	          ml_values = send "ml_#{method}"
 	          ml_values[lang] = value
-	          yml = options[:disable_url_encode] ?
-	          		Multilingual.to_yml(ml_values, languages) :
-	          		ml_values.to_yaml
+            yml = ml_values.ya2yaml
 	          send "#{method}_ml=", yml
 	        end
 	      end
@@ -50,15 +48,5 @@ module Multilingual
     end
   end
 
-  protected
-
-    def self.to_yml(values, languages)
-	    yaml = "--- \n"
-	    languages.each do |lang|
-	        yaml += ":#{lang}: " +
-	        (values[lang] || '').gsub(/\n|\r/, '').gsub(':', '&#0058;') + "\n"
-	    end
-	    yaml + "\n"
-	end
 end
 
