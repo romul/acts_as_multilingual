@@ -1,0 +1,66 @@
+ActsAsMultilingual
+==================
+
+This plugin add multilingual support to some columns in your ActiveRecord models
+
+### Dependencies
+
+http://github.com/ptb/ya2yaml
+
+
+### Usage example
+
+#### Prepare database
+
+To make column multilingual you should add _ml suffix to it name:
+
+    class CreatePosts < ActiveRecord::Migration
+      def self.up
+        create_table :posts, :force => true do |t|
+          t.column :title_ml, :text # add _ml suffix to make column multilingual
+          t.column :body_ml, :text
+        end
+      end
+
+      def self.down
+        drop_table :posts
+      end
+    end
+
+#### Add some instructions to bottom environment.rb
+
+    Multilingual.languages = [:ru, :en]
+
+#### Add acts_as_multilingual statement to your models
+
+    class Post < ActiveRecord::Base
+      acts_as_multilingual [:title, :body]
+    end
+
+It's all. Now Post model support ru, en languages:
+
+    p = Post.new
+    p.title_en = 'Some title'
+    p.title_ru = 'Заголовок'
+    p.save!
+
+    p = Post.find(p.id)
+
+    I18n.locale = 'ru'
+    p.title    # 'Заголовок'
+    p.title_en # 'Some title'
+    p.title_ru # 'Заголовок'
+
+    I18n.locale = 'en'
+    p.title    # 'Some title'
+    p.title_en # 'Some title'
+    p.title_ru # 'Заголовок'
+
+If you don't want have encoded values in multilingual columns, you may try disable_url_encode option:
+
+    acts_as_multilingual [:title, :body], :disable_url_encode => true
+
+---------
+
+Copyright (c) 2009 Roman Smirnov (aka Romul) <POMAHC [ at ] gmail [ dot ] com>, released under the MIT license
+
