@@ -1,10 +1,16 @@
-= ActsAsMultilingual
+ActsAsMultilingual
+==================
 
 This plugin add multilingual support to some columns in your ActiveRecord models
 
-== Usage example
+### Dependencies
 
-=== Prepare database
+http://github.com/ptb/ya2yaml
+
+
+### Usage example
+
+#### Prepare database
 
 To make column multilingual you should add _ml suffix to it name:
 
@@ -21,11 +27,11 @@ To make column multilingual you should add _ml suffix to it name:
       end
     end
 
-=== Add some instructions to bottom environment.rb
+#### Add some instructions to bottom environment.rb
 
     Multilingual.languages = [:ru, :en]
 
-=== Add acts_as_multilingual statement to your models
+#### Add acts_as_multilingual statement to your models
 
     class Post < ActiveRecord::Base
       acts_as_multilingual [:title, :body]
